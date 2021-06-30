@@ -149,6 +149,8 @@ namespace Cifrado_App
         {
             string FilePath = txtFilePath.Text;
             EncryptAesManagedFile(FilePath);
+            string filePath = @"C:\Users\Jessenia-PC\Cifrado\textoCifrado.txt";
+            File.WriteAllBytes(filePath, encryptedFile);
         }
 
         void EncryptAesManagedFile(string path)
@@ -161,10 +163,14 @@ namespace Cifrado_App
                 {
                     keyFile = aes.Key;
                     IVFile = aes.IV;
-                    byte[] plainContent = File.ReadAllBytes(path);
+                    //byte[] plainContent = File.ReadAllBytes(path);
                     // Encrypt string    
-                    encryptedFile = EncryptFile(plainContent, keyFile, IVFile);
-                   
+                    //encryptedFile = EncryptFile(plainContent, keyFile, IVFile);
+                    //string prueba = Encoding.UTF8.GetString(plainContent);
+                    string text = System.IO.File.ReadAllText(path);
+                    encryptedFile = Encrypt(text, keyFile, IVFile);
+
+
                 }
             }
             catch (Exception exp)
@@ -207,16 +213,20 @@ namespace Cifrado_App
         private void btnDesEncryptFile_Click(object sender, EventArgs e)
         {
             
-            string FilePath = txtFilePath.Text;
+            string FilePath = @"C:\Users\Jessenia-PC\Cifrado\textoDescifrado.txt";
+            /*
             byte[] plainContent = File.ReadAllBytes(FilePath);
             string texto = Encoding.UTF8.GetString(plainContent);
-            
-            
+            */
+
             using (AesManaged aes = new AesManaged())
             {
-                string texto1 = DecryptFile(encryptedFile, keyFile, IVFile);
+                //string texto1 = DecryptFile(encryptedFile, keyFile, IVFile);
+                //file(texto1, FilePath);
+
+                string texto1 = Decrypt(encryptedFile, keyFile, IVFile);
                 file(texto1, FilePath);
-               // DecryptFile(FilePath, keyFile, IVFile);
+
 
             }
         }
@@ -227,37 +237,7 @@ namespace Cifrado_App
                 writer.WriteLine(texto);
             }
         }
-        public static async Task ExampleAsync( string texto)
-        {
-            string filePath = @"C:\Users\Jessenia-PC\Cifrado\textoDescifrado.txt";
-            string text =
-                "A class is the most powerful data type in C#. Like a structure, " +
-                "a class defines the data and behavior of the data type. ";
-
-            await File.WriteAllTextAsync(filePath, texto);
-        }
-        static string DecryptF(byte[] cipherText, byte[] Key, byte[] IV)
-        {
-            string plaintext = null;
-            // Create AesManaged    
-            using (AesManaged aes = new AesManaged())
-            {
-                // Create a decryptor    
-                ICryptoTransform decryptor = aes.CreateDecryptor(Key, IV);
-                // Create the streams used for decryption.    
-                using (MemoryStream ms = new MemoryStream(cipherText))
-                {
-                    // Create crypto stream    
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
-                    {
-                        // Read crypto stream    
-                        using (StreamReader reader = new StreamReader(cs))
-                            plaintext = reader.ReadToEnd();
-                    }
-                }
-            }
-            return plaintext;
-        }
+        
 
         static string DecryptFile(byte[] cipherText, byte[] Key, byte[] IV)
         {
